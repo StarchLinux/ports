@@ -1,0 +1,38 @@
+# Keeper: Strake <strake888@gmail.com>
+pkgname=axtls
+pkgver=1.4.9
+pkgrel=1
+pkgdesc="TLS library"
+arch=('x86_64')
+url="http://axtls.sourceforge.net/"
+license=('BSD')
+source=(http://superb-dca2.dl.sourceforge.net/project/axtls/1.4.9/axTLS-1.4.9.tar.gz
+	config
+	config.h
+	no_dynamic_bullshit.diff)
+
+prepare() {
+	cd "$srcdir"
+	cp config axTLS/config/.config
+	cp config.h axTLS/config/
+	cd axTLS
+	echo config/makefile.conf | situ sed 's/ -shared/ || true/' # sharing is for communists
+	echo Makefile | situ sed 's/ --no-dereference/ -P/'
+	patch -p 0 <"$srcdir/no_dynamic_bullshit.diff"
+}
+
+build() {
+	cd "$srcdir/axTLS"
+	make
+}
+
+package() {
+	cd "$srcdir/axTLS"
+	rm -f _stage/libaxtls.so*
+	make DESTDIR="$pkgdir/" install
+}
+
+sha256sums=('9bc08f4c7a6bda3079af8e3f5ceee6b2ee92af34e8efbc9acfeee6c27b1f7cc3'
+            '37e0aae947ec888559ece867f2a7deba2ab936d52ff094a8143a3a7e27a1b431'
+            'c7b4ca48885f6a3801402d633339a03d5725b9516b3d05323e1e08e46cf2b306'
+            '9f18cd305b231da962169ca833d0ca92b4cd86ec52e5818fa5b723a9cc3f8ae9')

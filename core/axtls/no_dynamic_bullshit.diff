@@ -1,0 +1,19 @@
+--- ssl/Makefile	2013-08-15 07:06:06.924590144 +0000
++++ ssl/Makefile	2013-08-15 07:06:16.931411541 +0000
+@@ -95,15 +95,7 @@
+ 	$(AR) -r $@ $(CRYPTO_OBJ) $(OBJ)
+ 
+ $(TARGET2) : $(CRYPTO_OBJ) $(OBJ)
+-ifndef CONFIG_PLATFORM_CYGWIN
+-	$(LD) $(LDFLAGS) $(LDSHARED) -Wl,-soname,$(LIBMAJOR) -o $(AXTLS_HOME)/$(STAGE)/$(LIBMINOR) $(CRYPTO_OBJ) $(OBJ)
+-	cd $(AXTLS_HOME)/$(STAGE); ln -sf $(LIBMINOR) $(LIBMAJOR); ln -sf $(LIBMAJOR) $(BASETARGET); cd -
+-else
+-	$(LD) $(LDFLAGS) $(LDSHARED) -o $(AXTLS_HOME)/$(STAGE)/cygaxtls.dll \
+-    -Wl,--out-implib=$(AXTLS_HOME)/$(STAGE)/libaxtls.dll.a \
+-    -Wl,--export-all-symbols \
+-    -Wl,--enable-auto-import $(CRYPTO_OBJ) $(OBJ)
+-endif
++	true
+ 
+ else  # Win32
+ CRYPTO_OBJ:=$(CRYPTO_OBJ:.o=.obj)
