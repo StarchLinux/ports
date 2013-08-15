@@ -1,0 +1,14 @@
+post_install() {
+  echo "You may want to do setuid on /usr/bin/busybox"
+  echo "  chmod 4555 /usr/bin/busybox"
+}
+
+pre_upgrade() {
+  busybox stat -c %a usr/bin/busybox >tmp/busybox.upgrade.script
+}
+
+post_upgrade() {
+  [ -f tmp/busybox.upgrade.script ] && busybox chmod `busybox cat tmp/busybox.upgrade.script` usr/bin/busybox
+  busybox rm -f tmp/busybox.upgrade.script
+  echo "busybox is in /usr/bin now. Readjust its mode if you modified it."
+}

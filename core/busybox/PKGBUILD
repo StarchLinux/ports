@@ -1,0 +1,32 @@
+# $Id: PKGBUILD 93409 2013-07-03 10:50:24Z spupykin $
+# Maintainer: Sergej Pupykin <pupykin.s+arch@gmail.com>
+# Contributor: Jens Pranaitis <jens@jenux.homelinux.org>
+
+pkgname=busybox
+pkgver=1.21.1
+pkgrel=1
+pkgdesc="Utilities for rescue and embedded systems"
+arch=("i686" "x86_64")
+url="http://www.busybox.net"
+license=('GPL')
+makedepends=("make" "gcc" "sed" "ncurses")
+provides=('coreutils' 'grep' 'sed' 'findutils' 'diffutils' 'awk' 'util-linux' 'util-linux-ng')
+source=($url/downloads/$pkgname-$pkgver.tar.bz2
+	config)
+install=busybox.install
+md5sums=('795394f83903b5eec6567d51eebb417e'
+         '3fbd88dc6327ff0455c17409efdbab79')
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+  cp $srcdir/config .config
+  sed -i '1i#include <sys/resource.h>' include/libbb.h
+  # if you want to run menuconfig uncomment the following line:
+#  make menuconfig ; return 1
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  install -Dm755 busybox $pkgdir/usr/bin/busybox
+}
