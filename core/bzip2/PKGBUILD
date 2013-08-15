@@ -1,0 +1,54 @@
+# $Id: PKGBUILD 158054 2012-05-02 01:12:57Z allan $
+# Maintainer: Ronald van Haren <ronald.archlinux.org>
+# Contributor: Judd <jvinet@zeroflux.org> 
+
+pkgname=bzip2
+pkgver=1.0.6
+pkgrel=4
+pkgdesc="A high-quality data compression program"
+arch=('i686' 'x86_64')
+license=('custom')
+url="http://sources.redhat.com/bzip2"
+groups=('base')
+source=(http://www.bzip.org/$pkgver/bzip2-$pkgver.tar.gz
+        bzip2-1.0.4-bzip2recover.patch)
+sha1sums=('3f89f861209ce81a6bab1fd1998c0ef311712002'
+          '85ce76fdb67f52f152bba368c1de81132dcdbdb5')
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  # use our optimization
+  echo Makefile | situ sed "s|-O2|${CFLAGS}|g"
+
+  patch -Np 1 < ../bzip2-1.0.4-bzip2recover.patch
+
+  make bzip2 bzip2recover libbz2.a
+}
+
+check() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make test
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  install -dm755 $pkgdir/usr/{bin,lib,include,share/man/man1}
+
+  install -m755 bzip2 bzip2recover bzdiff bzgrep bzmore $pkgdir/usr/bin
+  ln -sf bzip2 $pkgdir/usr/bin/bunzip2
+  ln -sf bzip2 $pkgdir/usr/bin/bzcat
+
+  install -m644 libbz2.a ${pkgdir}/usr/lib/libbz2.a
+
+  install -m644 bzlib.h $pkgdir/usr/include/
+
+  install -m644 bzip2.1 $pkgdir/usr/share/man/man1/
+  ln -sf bzip2.1 $pkgdir/usr/share/man/man1/bunzip2.1
+  ln -sf bzip2.1 $pkgdir/usr/share/man/man1/bzcat.1
+  ln -sf bzip2.1 $pkgdir/usr/share/man/man1/bzip2recover.1
+
+  install -Dm644 $srcdir/${pkgname}-${pkgver}/LICENSE \
+                 $pkgdir/usr/share/licenses/${pkgname}/LICENSE
+}
