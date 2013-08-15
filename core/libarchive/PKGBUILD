@@ -1,0 +1,34 @@
+# $Id: PKGBUILD 179100 2013-03-03 17:28:26Z dreisner $
+# Maintainer: Dan McGee <dan@archlinux.org>
+
+pkgname=libarchive
+pkgver=3.1.2
+pkgrel=1
+pkgdesc="library that can create and read several streaming archive formats"
+arch=('i686' 'x86_64')
+url="http://libarchive.org/"
+license=('BSD')
+makedepends=('bzip2' 'lzo2' 'xz' 'zlib')
+source=("http://libarchive.org/downloads/$pkgname-$pkgver.tar.gz"
+        '0001-mtree-fix-line-filename-length-calculation.patch')
+md5sums=('efad5a503f66329bb9d2f4308b5de98a'
+         'fda89c145bbcd793a96b06b463ef6a72')
+
+build() {
+  cd "$pkgname-$pkgver"
+
+  # https://code.google.com/p/libarchive/issues/detail?id=301
+  # upstream commit e65bf287f0133426b26611fe3e80b51267987106
+  patch -Np 1 <"$srcdir/0001-mtree-fix-line-filename-length-calculation.patch"
+
+  LIBS="-lz -llzma -lbz2 -llzo2" \
+  ./configure --prefix=/usr --disable-shared --without-xml2
+  make
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  make DESTDIR="$pkgdir" install
+
+  install -D -m644 COPYING "$pkgdir"/usr/share/licenses/libarchive/COPYING
+}
