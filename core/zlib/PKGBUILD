@@ -1,0 +1,28 @@
+# $Id: PKGBUILD 184034 2013-05-02 08:15:23Z pierre $
+# Maintainer: Pierre Schmitz <pierre@archlinux.de>
+
+pkgname=zlib
+pkgver=1.2.8
+pkgrel=1
+pkgdesc='Compression library implementing the deflate compression method found in gzip and PKZIP'
+arch=('i686' 'x86_64')
+license=('custom')
+url="http://www.zlib.net/"
+source=("http://zlib.net/current/zlib-${pkgver}.tar.gz")
+md5sums=('44d667c142d7cda120332623eab69f40')
+
+build() {
+	cd ${srcdir}/zlib-$pkgver
+	./configure --prefix=/usr
+	make
+}
+
+check() {
+	cd ${srcdir}/zlib-$pkgver
+	make test
+}
+
+package() {
+	cd ${srcdir}/zlib-$pkgver
+	make install DESTDIR=${pkgdir}
+}
