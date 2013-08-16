@@ -1,0 +1,56 @@
+# $Id: PKGBUILD 182643 2013-04-12 00:05:23Z allan $
+# Maintainer: Allan McRae <allan@archlinux.org>
+
+# toolchain build order: linux-api-headers->glibc->binutils->gcc->binutils->glibc
+
+pkgname=binutils
+pkgver=2.17
+pkgrel=2
+pkgdesc="A set of programs to assemble and manipulate binary and object files"
+arch=('i686' 'x86_64')
+url="http://www.gnu.org/software/binutils/"
+license=('GPL')
+groups=('base-devel')
+depends=('zlib')
+checkdepends=('dejagnu' 'bc')
+options=('!libtool' '!distcc' '!ccache')
+install=binutils.install
+source=(ftp://ftp.gnu.org/gnu/binutils/binutils-${pkgver}.tar.bz2)
+
+prepare() {
+  mkdir -p ${srcdir}/binutils-build
+}
+
+build() {
+  cd ${srcdir}/binutils-build
+
+  ${srcdir}/binutils-${pkgver}/configure --prefix=/usr \
+    --with-lib-path=/usr/lib:/usr/local/lib \
+    --with-bugurl=https://bugs.archlinux.org/ \
+    --enable-plugins --enable-threads \
+    --with-pic --disable-werror --disable-multilib
+
+  # check the host environment and makes sure all the necessary tools are available
+  make configure-host
+
+  make tooldir=/usr
+}
+
+check() {
+  cd ${srcdir}/binutils-build
+  
+  # unset LDFLAGS as testsuite makes assumptions about which ones are active
+  # do not abort on errors - manually check log files
+  make LDFLAGS="" -k check || true
+}
+
+package() {
+  cd ${srcdir}/binutils-build
+  make prefix=${pkgdir}/usr tooldir=${pkgdir}/usr install
+  
+  # Add some useful headers
+  install -m644 ${srcdir}/binutils-${pkgver}/include/libiberty.h ${pkgdir}/usr/include
+  install -m644 ${srcdir}/binutils-${pkgver}/include/demangle.h ${pkgdir}/usr/include
+}
+
+sha256sums=('b8b6363121a99aaf0309d0a6f63a18c203ddbb34f53683c9a56d568be2b6a549')
