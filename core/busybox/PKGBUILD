@@ -28,5 +28,5 @@ build() {
 
 package() {
   cd "$srcdir/$pkgname-$pkgver"
-  install -Dm755 busybox $pkgdir/usr/bin/busybox
+  make CONFIG_PREFIX="${pkgdir}" install
 }
