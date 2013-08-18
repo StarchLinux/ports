@@ -1,0 +1,26 @@
+# $Id: PKGBUILD 192097 2013-08-05 20:37:17Z eric $
+# Maintainer: Stéphane Gaudreault <stephane@archlinux.org>
+# Contributor: Aaron Griffin <aaron@archlinux.org>
+
+pkgname=nasm
+pkgver=2.10.09
+pkgrel=1
+pkgdesc="An 80x86 assembler designed for portability and modularity"
+arch=('i686' 'x86_64')
+url="http://www.nasm.us"
+license=('BSD')
+install=nasm.install
+source=(http://www.nasm.us/pub/nasm/releasebuilds/${pkgver}/${pkgname}-${pkgver}.tar.xz)
+sha1sums=('062dd7315b307870917e708a96b6862481cefc54')
+
+build() {
+  cd ${pkgname}-${pkgver}
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd ${pkgname}-${pkgver}
+  make INSTALLROOT="${pkgdir}" install install_rdf
+  install -D -m644 LICENSE "${pkgdir}"/usr/share/licenses/nasm/LICENSE
+}
