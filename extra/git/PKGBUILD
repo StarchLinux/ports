@@ -1,0 +1,94 @@
+# $Id: PKGBUILD 191563 2013-07-25 14:47:59Z dan $
+# Maintainer: Dan McGee <dan@archlinux.org>
+
+pkgname=git
+pkgver=1.8.3.4
+pkgrel=1
+pkgdesc="the fast distributed version control system"
+arch=(i686 x86_64)
+url="http://git-scm.com/"
+license=('GPL2')
+depends=('curl')
+optdepends=('python2: various helper scripts'
+            'subversion: git svn'
+            'cvsps: git cvsimport')
+replaces=('git-core')
+provides=('git-core')
+install=git.install
+source=("http://git-core.googlecode.com/files/git-$pkgver.tar.gz"
+        "http://git-core.googlecode.com/files/git-manpages-$pkgver.tar.gz")
+
+build() {
+  export PYTHON_PATH='/usr/bin/python2'
+  cd "$srcdir/$pkgname-$pkgver"
+  ./configure --without-iconv
+  make prefix=/usr gitexecdir=/usr/lib/git-core \
+    CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS" \
+    NO_PERL=1 NO_PYTHON=1 NO_ICONV=1 NO_TCLTK=1 \
+    NO_CROSS_DIRECTORY_HARDLINKS=1 \
+    all
+}
+
+check() {
+  cd "$srcdir/$pkgname-$pkgver"
+  local jobs
+  jobs=$(expr "$MAKEFLAGS" : '.*\(-j[0-9]*\).*')
+  mkdir -p /dev/shm/git-test
+  # We used to use this, but silly git regressions:
+  #GIT_TEST_OPTS="--root=/dev/shm/" \
+  # http://comments.gmane.org/gmane.comp.version-control.git/202020
+  make prefix=/usr gitexecdir=/usr/lib/git-core \
+    CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS" \
+    NO_PERL=1 NO_PYTHON=1 NO_ICONV=1 NO_TCLTK=1 \
+    NO_CROSS_DIRECTORY_HARDLINKS=1 \
+    NO_SVN_TESTS=y \
+    DEFAULT_TEST_TARGET=prove \
+    GIT_PROVE_OPTS="$jobs -Q" \
+    GIT_TEST_OPTS="--root=/dev/shm/git-test" \
+    test
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make prefix=/usr gitexecdir=/usr/lib/git-core \
+    CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS" \
+    NO_PERL=1 NO_PYTHON=1 NO_ICONV=1 NO_TCLTK=1 \
+    NO_CROSS_DIRECTORY_HARDLINKS=1 \
+    INSTALLDIRS=vendor DESTDIR="$pkgdir" install
+
+  # bash completion
+  mkdir -p "$pkgdir"/usr/share/bash-completion/completions/
+  install -m644 ./contrib/completion/git-completion.bash "$pkgdir"/usr/share/bash-completion/completions/git
+  # fancy git prompt
+  mkdir -p "$pkgdir"/usr/share/git/
+  install -m644 ./contrib/completion/git-prompt.sh "$pkgdir"/usr/share/git/git-prompt.sh
+  # the rest of the contrib stuff
+  cp -a ./contrib/* $pkgdir/usr/share/git/
+
+  # scripts are for python 2.x
+  sed -i 's%#! */usr/bin/env python%#!/usr/bin/env python2%' \
+  ls \
+    $(find "$pkgdir" -name '*.py') \
+    "$pkgdir"/usr/lib/git-core/git-p4 \
+    "$pkgdir"/usr/share/git/gitview/gitview \
+    "$pkgdir"/usr/share/git/remote-helpers/git-remote-bzr \
+    "$pkgdir"/usr/share/git/remote-helpers/git-remote-hg |
+  situ sed -r 's%^#! */usr/bin/env python%&2%'
+  ls \
+    "$pkgdir"/usr/share/git/svn-fe/svnrdump_sim.py |
+  situ sed -r 's%^#! */usr/bin/python%&2%'
+
+
+  # how 'bout some manpages?
+  for mansect in man1 man5 man7; do
+    for manpage in "$srcdir"/$mansect/*; do
+      install -D -m644 $manpage "$pkgdir"/usr/share/man/$mansect/$(basename $manpage)
+    done
+  done
+
+  # remove perllocal.pod, .packlist, and empty directories.
+  rm -rf "$pkgdir"/usr/lib/perl5
+}
+
+sha256sums=('dfa2cdf2df92b4abe956b1e7586030381c4e39e89161ab789a660d8d1f24d9d9'
+            '6943c3b2362c107ab32d8ed81b8f4811c6e5a2eddd91b8e4188ccf6b4be2b740')
