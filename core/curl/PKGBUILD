@@ -23,6 +23,7 @@ md5sums=('6f26843f7e3a2fb06e02f68a55efe8c7'
 build() {
   cd "$pkgname-$pkgver"
 
+  LIBS='-lpthread' \
   ./configure \
       --prefix=/usr \
       --mandir=/usr/share/man \
