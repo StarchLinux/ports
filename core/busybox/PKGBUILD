@@ -10,7 +10,7 @@ arch=("i686" "x86_64")
 url="http://www.busybox.net"
 license=('GPL')
 makedepends=("make" "gcc" "sed" "ncurses")
-provides=('coreutils' 'grep' 'sed' 'findutils' 'diffutils' 'awk' 'util-linux' 'util-linux-ng' 'sysvinit' 'sysvinit-tools' 'which' 'tar' 'wget' 'psmisc' 'procps-ng' 'less')
+provides=('coreutils' 'grep' 'sed' 'findutils' 'diffutils' 'awk' 'util-linux' 'util-linux-ng' 'sysvinit' 'sysvinit-tools' 'which' 'tar' 'wget' 'psmisc' 'procps-ng' 'less' 'kmod')
 source=($url/downloads/$pkgname-$pkgver.tar.bz2
 	config)
 install=busybox.install
