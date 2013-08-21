@@ -15,7 +15,8 @@ md5sums=('8cb9c412e5f2d96bc6f459aa8c6282a1'
 
 build() {
   cd ${srcdir}/
-  mkdir ncurses{,w}-build
+  rm -rf ncurses{,w}-build
+  mkdir -p ncurses{,w}-build
 
   cd ${srcdir}/ncursesw-build
   ../${pkgname}-${pkgver}/configure --prefix=/usr --mandir=/usr/share/man \
