@@ -1,0 +1,21 @@
+pkgname=yacc
+pkgver=5.3
+pkgrel=1
+pkgdesc="parser maker"
+arch=(x86_64)
+url="http://openbsd.org/"
+license=('BSD')
+makedepends=('bmake')
+source=($pkgname.tar.gz)
+
+build() {
+	cd "$srcdir/$pkgname"
+	bmake NROFF=true
+}
+
+package() {
+	cd "$srcdir/$pkgname"
+	bmake DESTDIR="$pkgdir/" BINDIR=bin install
+}
+
+sha256sums=('af1c00dd555250978a9793f1cad96baaf07d12fb524e05fa0fa14921986ac197')
