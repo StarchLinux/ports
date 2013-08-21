@@ -1,0 +1,21 @@
+pkgname=lex
+pkgver=5.3
+pkgrel=1
+pkgdesc="lexer maker"
+arch=(x86_64)
+url="http://openbsd.org/"
+license=('BSD')
+makedepends=('bmake' 'yacc' 'lex')
+source=($pkgname.tar.gz)
+
+build() {
+	cd "$srcdir/$pkgname"
+	bmake NROFF=true
+}
+
+package() {
+	cd "$srcdir/$pkgname"
+	bmake DESTDIR="$pkgdir/" BINDIR=bin install
+}
+
+sha256sums=('5c1e065a9def08749fca60699b78ffeb21f7e915a2096ad0dead7c04360418e1')
