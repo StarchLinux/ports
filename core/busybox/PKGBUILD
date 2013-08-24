@@ -14,8 +14,6 @@ provides=('coreutils' 'grep' 'sed' 'findutils' 'diffutils' 'awk' 'util-linux' 'u
 source=($url/downloads/$pkgname-$pkgver.tar.bz2
 	config)
 install=busybox.install
-md5sums=('795394f83903b5eec6567d51eebb417e'
-         '3fbd88dc6327ff0455c17409efdbab79')
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
@@ -30,3 +28,6 @@ package() {
   cd "$srcdir/$pkgname-$pkgver"
   make CONFIG_PREFIX="${pkgdir}" install
 }
+
+sha256sums=('cd5be0912ec856110ae12c76c3ec9cd5cba1df45b5a9da2b095b8284d1481303'
+            '96a3a5b25a976f423edd920bf667f4cf08df7b38d07dc0c5753d6afe28944c7c')
