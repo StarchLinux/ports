@@ -1,0 +1,27 @@
+# $Id: PKGBUILD 137896 2011-09-12 10:03:30Z pierre $
+# Maintainer: dorphell <dorphell@archlinux.org>
+
+pkgname=bc
+pkgver=1.06
+pkgrel=8
+pkgdesc="An arbitrary precision calculator language"
+arch=('i686' 'x86_64')
+url="http://www.gnu.org/software/bc/"
+license=('GPL')
+install=bc.install
+source=("ftp://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz")
+
+build() {
+  export CFLAGS="${CFLAGS/-O?/-Os}"
+
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure --prefix=/usr --mandir=/usr/share/man
+  make LEX="flex -I"
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+}
+
+sha256sums=('4ef6d9f17c3c0d92d8798e35666175ecd3d8efac4009d6457b5c99cea72c0e33')
