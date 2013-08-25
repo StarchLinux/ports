@@ -1,0 +1,24 @@
+# Keeper: Strake <strake888@gmail.com>
+pkgname=musl
+pkgver=0.9.12
+pkgrel=1
+pkgdesc="C standard library"
+arch=(x86_64)
+url="http://musl-libc.org/"
+license=('MIT')
+groups=('base')
+source=(http://www.musl-libc.org/releases/musl-0.9.12.tar.gz)
+
+build() {
+	cd "$srcdir/$pkgname-$pkgver"
+	./configure --prefix=
+	make
+}
+
+package() {
+	cd "$srcdir/$pkgname-$pkgver"
+	make DESTDIR="$pkgdir/" install
+	rm -rf "$pkgdir/bin" # musl-gcc
+}
+
+sha256sums=('72353f9e1f2fdaf5e88223dcd1cfa5555f5a364eb5e4a9967de1fd44cc4c6d3e')
