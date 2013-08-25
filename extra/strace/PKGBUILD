@@ -1,0 +1,28 @@
+# $Id: PKGBUILD 187820 2013-06-06 14:47:25Z giovanni $
+# Maintainer: Giovanni Scafora <giovanni@archlinux.org>
+# Contributor: Tom Newsom <Jeepster@gmx.co.uk>
+
+pkgname=strace
+pkgver=4.8
+pkgrel=1
+pkgdesc="A useful diagnositic, instructional, and debugging tool"
+arch=('i686' 'x86_64')
+url="http://sourceforge.net/projects/strace/"
+license=('custom')
+optdepends=('perl')
+source=("http://downloads.sourceforge.net/${pkgname}/${pkgname}-$pkgver.tar.xz")
+md5sums=('c575ef43829586801f514fd91bfe7575')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  make DESTDIR="${pkgdir}/" install
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
