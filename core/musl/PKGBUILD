@@ -11,7 +11,7 @@ source=(http://www.musl-libc.org/releases/musl-0.9.12.tar.gz)
 
 build() {
 	cd "$srcdir/$pkgname-$pkgver"
-	./configure --prefix=
+	./configure --prefix= --disable-shared
 	make
 }
 
