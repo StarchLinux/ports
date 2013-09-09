@@ -1,0 +1,27 @@
+pkgname=gcc
+pkgver=3.3.6
+pkgrel=1
+pkgdesc="GNU Compiler Collection"
+arch=(x86_64)
+url="http://gcc.gnu.org/"
+license=('GPL')
+depends=(binutils)
+source=(http://ftp.gnu.org/gnu/gcc/$pkgname-$pkgver/$pkgname-core-$pkgver.tar.bz2)
+
+build() {
+	cd "$srcdir/$pkgname-$pkgver"
+	./configure --prefix=/usr --disable-shared
+	make
+}
+
+check() {
+	cd "$srcdir/$pkgname-$pkgver"
+	make -k check
+}
+
+package() {
+	cd "$srcdir/$pkgname-$pkgver"
+	make DESTDIR="$pkgdir/" install
+}
+
+sha256sums=('4f9bee8ac57711508d6b8031d5ecfefc16fcf37ec81568b3f8344ef5f4cdfeb6')
