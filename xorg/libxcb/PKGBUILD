@@ -1,0 +1,31 @@
+# $Id: PKGBUILD 191295 2013-07-23 11:13:07Z jgc $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+# Contributor: Alexander Baldeck <alexander@archlinux.org>
+
+pkgname=libxcb
+pkgver=15934.9
+pkgrel=1
+pkgdesc="X11 client-side library"
+arch=('i686' 'x86_64')
+depends=('xcb-proto>=1.8-2' 'libxdmcp' 'libxau')
+makedepends=('bmake')
+license=('custom')
+source=(http://strake.me.uk:1104/starch/$pkgname-$pkgver.tar.xz
+	xcb.pc)
+ 
+build() {
+  cd "$pkgname-$pkgver"
+  bmake
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  bmake DESTDIR="$pkgdir" LIBGRP= LIBOWN= install
+  mkdir -p "$pkgdir/usr/include/xcb"
+  cp "$srcdir/$pkgname-$pkgver/"*.h "$pkgdir/usr/include/xcb/"
+  mkdir -p "$pkgdir/usr/lib/pkgconfig"
+  cp "$srcdir/xcb.pc" "$pkgdir/usr/lib/pkgconfig"
+}
+
+sha256sums=('6bc1f899a72e5ba8b7f3358c4ef07245e6a0a139b6662765d106d07e6b03b557'
+            '84278a2698eac7aaa08c4d5cd1a0dc009eaf781a0b08152195b157ea1cc1a41d')

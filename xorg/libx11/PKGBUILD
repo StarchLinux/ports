@@ -1,0 +1,35 @@
+# $Id: PKGBUILD 191746 2013-07-30 07:19:33Z jgc $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libx11
+pkgver=1.6.1
+pkgrel=1
+pkgdesc="X11 client-side library"
+arch=(i686 x86_64)
+url="http://xorg.freedesktop.org/"
+depends=('xproto' 'kbproto')
+makedepends=('xorg-util-macros' 'xextproto' 'xtrans' 'inputproto')
+options=('!libtool')
+license=('custom')
+source=(${url}/releases/individual/lib/libX11-${pkgver}.tar.bz2)
+sha256sums=('10a54fc16b58b4f5a5eed4d080c357a82fd2f42d09af625c1f5df50650701892')
+
+build() {
+  cd "${srcdir}/libX11-${pkgver}"
+  ac_preproc_ok=y \
+  ./configure --prefix=/usr --disable-shared --disable-pkg-config --disable-xf86bigfont --with-keysymdefdir=/usr/include/X11
+  make
+}
+
+check() {
+  cd "${srcdir}/libX11-${pkgver}"
+  make check
+}
+
+package() {
+  cd "${srcdir}/libX11-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -d -m755 "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

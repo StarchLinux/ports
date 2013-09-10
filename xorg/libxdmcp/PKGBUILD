@@ -1,0 +1,29 @@
+# $Id: PKGBUILD 152771 2012-03-09 16:07:19Z andyrtr $
+#Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libxdmcp
+pkgver=1.1.1
+pkgrel=1
+pkgdesc="X11 Display Manager Control Protocol library"
+arch=('i686' 'x86_64')
+url="http://xorg.freedesktop.org/"
+license=('custom')
+depends=('xproto')
+makedepends=('xorg-util-macros')
+options=('!libtool')
+source=("${url}/releases/individual/lib/libXdmcp-${pkgver}.tar.bz2")
+sha1sums=('3b63e8fc1600c51d9897d017da190fc6c16245b6')
+
+build() {
+  cd "${srcdir}/libXdmcp-${pkgver}"
+  ./configure --prefix=/usr --sysconfdir=/etc --disable-shared
+  make
+}
+
+package() {
+  cd "${srcdir}/libXdmcp-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}
