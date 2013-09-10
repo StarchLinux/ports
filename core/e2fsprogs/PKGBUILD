@@ -19,15 +19,19 @@ install=${pkgname}.install
 sha1sums=('79cdb2374a9c0e68f01739598679db06d546b897'
           'f4a0d5b0cdb980e3fedd6f5e7dde0b0ffb7bbdfb')
 
-build() {
+prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
   # Remove unnecessary init.d directory
   echo misc/Makefile.in | situ sed '/init\.d/s|^|#|'
 
+  echo lib/ext2fs/unix_io.c | situ sed 's/__uint64_t/uint64_t/g'
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
   ./configure --prefix=/usr --with-root-prefix="" --libdir=/usr/lib \
       --sbindir=/usr/bin --disable-elf-shlibs --disable-fsck --disable-uuidd
-
   make
 }
 
