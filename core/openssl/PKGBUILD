@@ -16,8 +16,16 @@ optdepends=('ca-certificates')
 options=('!makeflags')
 backup=('etc/ssl/openssl.cnf')
 source=("http://www.openssl.org/source/${pkgname}-${_ver}.tar.gz"
-        "http://www.openssl.org/source/${pkgname}-${_ver}.tar.gz.asc"
-        'ca-dir.patch')
+        "http://www.openssl.org/source/${pkgname}-${_ver}.tar.gz.asc")
+
+prepare() {
+	cd $srcdir/$pkgname-$_ver
+
+	# set ca dir to /etc/ssl by default
+	ls apps/CA.pl.in apps/CA.sh apps/openssl.cnf | situ sed 's#\./demoCA#/etc/ssl#g'
+	
+	echo crypto/ui/ui_openssl.c | situ sed -r '/^#if(def)? *TERMIO$/,/^#endif/d; /<termio\.h>/d'
+}
 
 build() {
 	cd $srcdir/$pkgname-$_ver
@@ -28,13 +36,10 @@ build() {
 		openssltarget='linux-elf'
 	fi
 
-	# set ca dir to /etc/ssl by default
-	patch -Np0 -i $srcdir/ca-dir.patch
-
 	# mark stack as non-executable: http://bugs.archlinux.org/task/12434
 	./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib \
 		no-shared no-dso zlib enable-md2 "${openssltarget}" \
-		-Wa,--noexecstack "${CFLAGS}" "${LDFLAGS}"
+		-Wa,--noexecstack "${CFLAGS} -DTERMIOS" "${LDFLAGS}"
 
 	make depend
 	make
@@ -56,5 +61,4 @@ package() {
 }
 
 sha256sums=('f74f15e8c8ff11aa3d5bb5f276d202ec18d7246e95f961db76054199c69c1ae3'
-            'SKIP'
-            '9e8126f3a748f4c1d6fe34d4436de72b16a40e97a6d18234d2e88caa179d50c4')
+            'SKIP')
