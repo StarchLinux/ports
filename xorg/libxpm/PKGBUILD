@@ -1,0 +1,34 @@
+# $Id: PKGBUILD 152783 2012-03-09 16:22:06Z andyrtr $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libxpm
+pkgver=3.5.10
+pkgrel=1
+pkgdesc="X11 pixmap library"
+arch=('i686' 'x86_64')
+license=('custom')
+url="http://xorg.freedesktop.org/"
+depends=('libxt' 'libxext')
+makedepends=('xorg-util-macros')
+options=('!libtool')
+source=("${url}/releases/individual/lib/libXpm-${pkgver}.tar.bz2")
+sha1sums=('eca9dbfa6253f7d6cc7d593dc83110c6c4876d7c')
+
+prepare() {
+  cd "${srcdir}/libXpm-${pkgver}"
+  ls */Makefile.* | situ sed 's/xgettext/true/g'
+}
+
+build() {
+  cd "${srcdir}/libXpm-${pkgver}"
+  LIBS="-lxcb -lSM -lICE -lXau" ./configure --prefix=/usr --sysconfdir=/etc --disable-shared
+  make
+}
+
+package() {
+  cd "${srcdir}/libXpm-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

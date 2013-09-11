@@ -1,0 +1,32 @@
+# $Id: PKGBUILD 189335 2013-07-03 08:11:31Z lcarlier $
+# Maintainer: AndyRTR <andyrtr@archlinux.org>
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libxi
+pkgver=1.7.2
+pkgrel=1
+pkgdesc="X11 Input extension library"
+arch=('i686' 'x86_64')
+url="http://xorg.freedesktop.org"
+depends=('libxext' 'inputproto')
+makedepends=('pkg-config' 'xorg-util-macros' 'libxfixes')
+options=(!libtool)
+license=('custom')
+source=(${url}/releases/individual/lib/libXi-${pkgver}.tar.bz2)
+sha256sums=('df24781dc63645e2b561cd0b20bd8a0e7aff02e426a8d2a7641159004d4cb20e')
+
+build() {
+  cd "${srcdir}/libXi-${pkgver}"
+
+  ./configure --disable-shared --disable-shared --prefix=/usr --sysconfdir=/etc 
+  make
+}
+
+package() {
+  cd "${srcdir}/libXi-${pkgver}"
+
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

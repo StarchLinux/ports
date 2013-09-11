@@ -1,0 +1,30 @@
+# $Id: PKGBUILD 186893 2013-05-31 14:14:53Z andyrtr $
+# Maintainer: AndyRTR <andyrtr@archlinux.org>
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libxtst
+pkgver=1.2.2
+pkgrel=1
+pkgdesc="X11 Testing -- Resource extension library"
+arch=('i686' 'x86_64')
+url="http://xorg.freedesktop.org/"
+license=('custom')
+depends=('libxext' 'libxi' 'recordproto' 'inputproto' 'libxfixes')
+makedepends=('xorg-util-macros')
+options=('!libtool')
+source=("${url}/releases/individual/lib/libXtst-${pkgver}.tar.bz2")
+sha256sums=('ef0a7ffd577e5f1a25b1663b375679529663a1880151beaa73e9186c8309f6d9')
+
+build() {
+  cd "${srcdir}/libXtst-${pkgver}"
+  ./configure --disable-shared --disable-shared --disable-shared --prefix=/usr --disable-shared
+  make
+}
+
+package() {
+  cd "${srcdir}/libXtst-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

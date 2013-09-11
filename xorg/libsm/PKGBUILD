@@ -1,0 +1,28 @@
+# $Id: PKGBUILD 151850 2012-03-03 13:43:52Z andyrtr $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libsm
+pkgver=1.2.1
+pkgrel=1
+pkgdesc="X11 Session Management library"
+arch=('i686' 'x86_64')
+license=('custom')
+url="http://xorg.freedesktop.org/"
+depends=('libice' 'util-linux-ng')
+makedepends=('xorg-util-macros' 'xtrans')
+options=('!libtool')
+source=(${url}/releases/individual/lib/libSM-${pkgver}.tar.bz2)
+sha1sums=('8d354a165e330022ffd3606aba562b8c8154213d')
+
+build() {
+  cd "${srcdir}/libSM-${pkgver}"
+  ./configure --disable-shared --disable-shared --disable-shared --prefix=/usr --sysconfdir=/etc
+  make
+}
+
+package() {
+  cd "${srcdir}/libSM-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}

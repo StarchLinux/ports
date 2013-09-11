@@ -1,0 +1,30 @@
+# $Id: PKGBUILD 186885 2013-05-31 14:04:26Z andyrtr $
+# Maintainer: AndyRTR <andyrtr@archlinux.org>
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libxres
+pkgver=1.0.7
+pkgrel=1
+pkgdesc="X11 Resource extension library"
+arch=('i686' 'x86_64')
+url="http://xorg.freedesktop.org"
+license=('custom')
+depends=('libxext')
+makedepends=('resourceproto' 'damageproto' 'compositeproto' 'scrnsaverproto' 'xorg-util-macros')
+options=('!libtool')
+source=("${url}/releases/individual/lib/libXres-${pkgver}.tar.bz2")
+sha256sums=('26899054aa87f81b17becc68e8645b240f140464cf90c42616ebb263ec5fa0e5')
+
+build() {
+  cd "${srcdir}/libXres-${pkgver}"
+  ./configure --disable-shared --disable-shared --disable-shared --prefix=/usr --sysconfdir=/etc --disable-shared
+  make
+}
+
+package() {
+  cd "${srcdir}/libXres-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

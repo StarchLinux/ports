@@ -1,0 +1,30 @@
+# $Id: PKGBUILD 188854 2013-06-23 08:21:34Z lcarlier $
+# Maintainer: Andreas Radke <andyrtr@archlinux.org>
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libxv
+pkgver=1.0.9
+pkgrel=1
+pkgdesc="X11 Video extension library"
+arch=('i686' 'x86_64')
+license=('custom')
+url="http://xorg.freedesktop.org/"
+depends=('libxext' 'videoproto')
+makedepends=('pkg-config')
+options=('!libtool')
+source=("${url}/releases/individual/lib/libXv-${pkgver}.tar.bz2")
+sha256sums=('a874dbf864d0271bbe795af67ef5b3f20096c92fc11eacbf0d2af00e32bc5b4b')
+
+build() {
+  cd "${srcdir}/libXv-${pkgver}"
+  ./configure --disable-shared --disable-shared --disable-shared --prefix=/usr --disable-shared 
+  make
+}
+
+package() {
+  cd "${srcdir}/libXv-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

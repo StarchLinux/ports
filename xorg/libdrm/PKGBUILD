@@ -1,0 +1,36 @@
+# $Id: PKGBUILD 190056 2013-07-13 17:35:10Z andyrtr $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=libdrm
+pkgver=2.4.46
+pkgrel=2
+pkgdesc="Userspace interface to kernel DRM services"
+arch=(i686 x86_64)
+license=('custom')
+depends=('libpciaccess')
+replaces=('libdrm-new' 'libdrm-nouveau')
+options=('!libtool')
+url="http://dri.freedesktop.org/"
+source=(http://dri.freedesktop.org/$pkgname/$pkgname-$pkgver.tar.bz2
+        COPYING)
+sha256sums=('33cf320dad4e8060768714792e12643ddf6756a719d262ba7d60b39c2b2650f1'
+            '9631d4f694952e3e6ae5a05534c2e93e994e47d3413677a3a00e45c8cef6db93')
+
+build() {
+  cd $pkgname-$pkgver
+
+  PTHREADSTUBS_CFLAGS=' ' PTHREADSTUBS_LIBS=' ' ./configure --prefix=/usr --enable-udev --disable-shared
+  make
+}
+
+check() {
+  cd $pkgname-$pkgver
+  make -k check
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -m755 -d "$pkgdir/usr/share/licenses/$pkgname"
+  install -m644 ../COPYING "$pkgdir/usr/share/licenses/$pkgname/"
+}
