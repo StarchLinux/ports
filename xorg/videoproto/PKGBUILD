@@ -1,0 +1,24 @@
+# $Id: PKGBUILD 191345 2013-07-23 17:48:56Z jgc $
+#Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=videoproto
+pkgver=2.3.2
+pkgrel=1
+pkgdesc="X11 Video extension wire protocol"
+arch=('any')
+url="http://xorg.freedesktop.org/"
+license=('custom')
+source=(${url}/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2)
+sha256sums=('8dae168cb820fcd32f564879afb3f24d27c176300d9af66819a18265539bd4b6')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure --disable-shared --disable-shared --disable-shared --prefix=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}
