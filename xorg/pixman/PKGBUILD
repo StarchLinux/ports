@@ -1,0 +1,44 @@
+# $Id: PKGBUILD 192216 2013-08-07 19:14:18Z andyrtr $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+# Maintainer: Andreas Radke <andyrtr@archlinux.org>
+# Contributor: Alexander Baldeck <alexander@archlinux.org>
+
+pkgname=pixman
+pkgver=0.30.2
+pkgrel=1
+pkgdesc="The pixel-manipulation library for X and cairo"
+arch=(i686 x86_64)
+url="http://xorg.freedesktop.org"
+license=('custom')
+options=('!libtool')
+source=(http://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.bz2)
+sha1sums=('4ea0832932fd5447a1d5768e0d5403b6c7c4dbaf')
+
+prepare() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ls pixman/pixman-matrix.c | situ sed '1i\
+int __builtin_clz (unsigned int x) {\
+	int n = sizeof (x) << 3;\
+	while (!(x >> --n));\
+	return ((sizeof (x) << 3) - (n + 1));\
+}\
+'
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure --prefix=/usr --disable-shared
+  make
+}
+
+check() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make check
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}
