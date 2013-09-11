@@ -1,0 +1,36 @@
+# $Id: PKGBUILD 184790 2013-05-08 14:12:44Z bpiotrowski $
+# Maintainer: Eric Belanger <eric@archlinux.org>
+# Contributor: John Proctor <jproctor@prium.net>
+
+pkgname=libxslt
+pkgver=1.1.28
+pkgrel=1
+pkgdesc="XML stylesheet transformation library"
+arch=('i686' 'x86_64')
+url="http://xmlsoft.org/XSLT/"
+license=('custom')
+depends=('libxml2' 'xz')
+options=('!libtool')
+source=(ftp://xmlsoft.org/libxslt/${pkgname}-${pkgver}.tar.gz)
+md5sums=('9667bf6f9310b957254fdcf6596600b7')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  LIBS="-llzma" ./configure --prefix=/usr --disable-shared
+  make
+}
+
+check() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make check
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+
+  rm -f "${pkgdir}"/usr/lib/python*/site-packages/*.a
+}
