@@ -1,0 +1,30 @@
+# $Id: PKGBUILD 189922 2013-07-11 14:37:25Z andyrtr $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+# Contributor: Alexander Baldeck <Alexander@archlinux.org
+
+pkgname=xf86-input-evdev
+pkgver=2.8.1
+pkgrel=1
+pkgdesc="X.org evdev input driver"
+arch=(i686 x86_64)
+url="http://xorg.freedesktop.org/"
+license=('custom')
+makedepends=('pkg-config' 'xorg-server-devel' 'xorg-util-macros' 'inputproto' 'resourceproto' 'scrnsaverproto' 'xproto')
+conflicts=('xorg-server<1.14.0' 'X-ABI-XINPUT_VERSION<19' 'X-ABI-XINPUT_VERSION>=20')
+options=('!libtool' '!makeflags')
+groups=('xorg-drivers' 'xorg')
+source=(${url}/releases/individual/driver/${pkgname}-${pkgver}.tar.bz2)
+sha256sums=('09f887e1ce6cdb92154035db9044e0795a5c80f1ffb9efc599aed9a9dc1ff539')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure --prefix=/usr --disable-shared
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}
