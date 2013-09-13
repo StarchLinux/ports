@@ -1,0 +1,28 @@
+pkgname=st
+pkgver=0.4.1
+pkgrel=1
+pkgdesc="A terminal emulator"
+arch=(x86_64)
+url="http://st.suckless.org/"
+license=('MIT')
+makedepends=('libxext' 'ncurses')
+source=(http://dl.suckless.org/$pkgname/$pkgname-$pkgver.tar.gz)
+
+prepare() {
+	cd "$srcdir/$pkgname-$pkgver"
+	ls config.mk | situ sed -r 's/-Wvariadic-macros//g; $a\
+LIBS += -lXrender -lX11 -lxcb -lXau -lxml2 -lz -lbz2 -llzma
+'
+}
+
+build() {
+	cd "$srcdir/$pkgname-$pkgver"
+	make
+}
+
+package() {
+	cd "$srcdir/$pkgname-$pkgver"
+	make DESTDIR="$pkgdir/" PREFIX= MANPREFIX=/doc/man install
+}
+
+sha256sums=('ee2f93c6d8cd95a5ab47423eeebde4a474be470309ceee33fa3c7757eae2bf31')
