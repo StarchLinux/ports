@@ -1,0 +1,68 @@
+# $Id: PKGBUILD 193403 2013-08-19 17:24:15Z thomas $
+# Maintainer: Eric Bélanger <eric@archlinux.org>
+# Maintainer: Thomas Bächler <thomas@archlinux.org>
+
+pkgbase=lvm2
+pkgname=('lvm2' 'device-mapper')
+pkgver=2.2.15961.0
+pkgrel=1
+arch=('i686' 'x86_64')
+url="http://sourceware.org/lvm2/"
+license=('GPL2' 'LGPL2.1')
+makedepends=()
+groups=('base')
+source=(http://strake.me.uk:1104/starch/$pkgname-$pkgver.tar.gz
+        lvm2_install
+        lvm2_hook
+        11-dm-initramfs.rules
+        lvm2.conf)
+
+prepare() {
+  cd lvm2
+  # enable lvmetad
+  #sed -i 's|use_lvmetad = 0|use_lvmetad = 1|' conf/example.conf.in
+}
+
+build() {
+  cd lvm2
+
+  ./configure --prefix= --sysconfdir=/etc --localstatedir=/var --sbindir=/sbin \
+    --with-default-pid-dir=/run --with-default-dm-run-dir=/run --with-default-run-dir=/run/lvm \
+    --enable-pkgconfig --with-default-locking-dir=/run/lock/lvm --disable-shared --enable-static_link
+  make
+}
+
+package_device-mapper() {
+  pkgdesc="Device mapper userspace library and tools"
+  url="http://sourceware.org/dm/"
+
+  cd lvm2
+  make DESTDIR="${pkgdir}" install_device-mapper
+  # extra udev rule for device-mapper in initramfs
+  install -D -m644 "${srcdir}/11-dm-initramfs.rules" "${pkgdir}/usr/lib/initcpio/udev/11-dm-initramfs.rules"
+}
+
+package_lvm2() {
+  pkgdesc="Logical Volume Manager 2 utilities"
+  depends=('bash' "device-mapper>=${pkgver}")
+  conflicts=('lvm' 'mkinitcpio<0.7')
+  backup=('etc/lvm/lvm.conf')
+  options=('!makeflags')
+  install=lvm2.install
+
+  cd lvm2
+  make DESTDIR="${pkgdir}" install_lvm2
+  # install applib
+  make -C liblvm DESTDIR="${pkgdir}" install
+  # /etc directories
+  install -d "${pkgdir}"/etc/lvm/{archive,backup}
+  # mkinitcpio hook
+  install -D -m644 "${srcdir}/lvm2_hook" "${pkgdir}/usr/lib/initcpio/hooks/lvm2"
+  install -D -m644 "${srcdir}/lvm2_install" "${pkgdir}/usr/lib/initcpio/install/lvm2"
+}
+
+sha256sums=('7dcda29ac3d8d03efdef81898a3f2961a657369d37e3c7d920a4ee173c6d8c4c'
+            '295895c3b9051c4d37641f26371dc25ae01fcae9b55f5d294409ea06a342af9f'
+            '7ff9fb0c67fc65e5e5155ae93f98c5125dfb445a308294dc79b80d79b923e7e0'
+            'e10f24b57582d6e2da71f7c80732a62e0ee2e3b867fe84591ccdb53e80fa92e0'
+            '780b4705386a2872bd3a64543d0622ec3084278c8da40c51ac0f3139cf2d67fb')
