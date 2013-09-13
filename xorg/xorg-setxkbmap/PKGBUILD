@@ -10,7 +10,7 @@ url='http://xorg.freedesktop.org/'
 license=('custom')
 arch=('i686' 'x86_64')
 depends=('libxkbfile')
-makedepends=('xorg-util-macros')
+makedepends=('xorg-util-macros' 'libxcb')
 source=("${url}/releases/individual/app/setxkbmap-${pkgver}.tar.bz2")
 sha1sums=('d10885d6215b06789961c67557df46406f99c2b7')
 
