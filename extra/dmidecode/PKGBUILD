@@ -1,0 +1,26 @@
+# $Id: PKGBUILD 185822 2013-05-19 13:06:30Z giovanni $
+# Maintainer: Giovanni Scafora <giovanni@archlinux.org>
+# Contributor: Jan de Groot <jgc@archlinux.org>
+
+pkgname=dmidecode
+pkgver=2.12
+pkgrel=2
+pkgdesc="Desktop Management Interface table related utilities"
+arch=('i686' 'x86_64')
+url="http://www.nongnu.org/dmidecode"
+license=('GPL')
+source=("http://download.savannah.nongnu.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('a406f3cbb27736491698697beeddb781')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  ls Makefile | situ sed "s:sbin:bin:g"
+  make prefix=/usr
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  make prefix=/usr DESTDIR="${pkgdir}" install
+}
