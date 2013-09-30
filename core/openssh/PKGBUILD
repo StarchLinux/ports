@@ -1,0 +1,75 @@
+# $Id: PKGBUILD 186025 2013-05-20 14:49:38Z bisson $
+# Maintainer: Gaetan Bisson <bisson@archlinux.org>
+# Contributor: Aaron Griffin <aaron@archlinux.org>
+# Contributor: judd <jvinet@zeroflux.org>
+
+pkgname=openssh
+pkgver=6.2p2
+pkgrel=1
+pkgdesc='Free version of the SSH connectivity tools'
+url='http://www.openssh.org/portable.html'
+license=('custom:BSD')
+arch=('i686' 'x86_64')
+makedepends=('linux-headers')
+depends=('openssl' 'libedit' 'ldns')
+optdepends=('xorg-xauth: X11 forwarding'
+            'x11-ssh-askpass: input passphrase in X')
+source=("ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/${pkgname}-${pkgver}.tar.gz")
+sha1sums=('c2b4909eba6f5ec6f9f75866c202db47f3b501ba')
+
+backup=('etc/ssh/ssh_config' 'etc/ssh/sshd_config')
+
+install=install
+
+prepare() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+
+	ls configure | situ sed 's/-lldns/& -lcrypto -lz/g'
+	echo '#define howmany(x,y)	(((x)+((y)-1))/(y))' >howmany.h
+}
+
+build() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+
+	CPPFLAGS="-DMISSING_HOWMANY -DMAXHOSTNAMELEN=4096 -include howmany.h" \
+	./configure \
+		--prefix=/usr \
+		--sbindir=/usr/bin \
+		--libexecdir=/usr/lib/ssh \
+		--sysconfdir=/etc/ssh \
+		--disable-utmp \
+		--disable-wtmp \
+		--disable-utmpx \
+		--disable-wtmpx \
+		--with-ldns \
+		--with-libedit \
+		--with-ssl-engine \
+		--with-sandbox=no \
+		--with-privsep-user=nemo \
+		--with-mantype=man \
+		--with-md5-passwords \
+		--with-pid-dir=/run \
+
+	make
+}
+
+check() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+
+	make tests ||
+	grep $USER /etc/passwd | grep -q /bin/false
+	# connect.sh fails when run with stupid login shell
+}
+
+package() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+
+	make DESTDIR="${pkgdir}" install
+
+	ln -sf ssh.1.gz "${pkgdir}"/usr/share/man/man1/slogin.1
+	install -Dm644 LICENCE "${pkgdir}/usr/share/licenses/${pkgname}/LICENCE"
+
+	install -Dm755 contrib/findssl.sh "${pkgdir}"/usr/bin/findssl.sh
+	install -Dm755 contrib/ssh-copy-id "${pkgdir}"/usr/bin/ssh-copy-id
+	install -Dm644 contrib/ssh-copy-id.1 "${pkgdir}"/usr/share/man/man1/ssh-copy-id.1
+}
