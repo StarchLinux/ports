@@ -1,0 +1,30 @@
+# $Id: PKGBUILD 187329 2013-06-05 12:52:10Z bisson $
+# Maintainer: Gaetan Bisson <bisson@archlinux.org>
+# Maintainer: Vesa Kaihlavirta <vesa@archlinux.org>
+# Contributor: Roman Cheplyaka <roma@ro-che.info>
+
+pkgname=libedit
+pkgver=20130601_3.1
+pkgrel=1
+pkgdesc='Command line editor library providing generic line editing, history, and tokenization functions'
+url='http://www.thrysoee.dk/editline/'
+arch=('i686' 'x86_64')
+license=('BSD')
+depends=('ncurses')
+options=('!libtool')
+source=("http://www.thrysoee.dk/editline/libedit-${pkgver/_/-}.tar.gz")
+sha1sums=('9c3fe7af5ba3d86c608872de3d6e8179add8cc88')
+
+build() {
+	cd "${srcdir}/${pkgname}-${pkgver/_/-}"
+	./configure --prefix= --enable-static --disable-shared
+	make
+}
+
+package() {
+	cd "${srcdir}/${pkgname}-${pkgver/_/-}"
+	make prefix="${pkgdir}" install
+
+	cp "${pkgdir}"/share/man/man3/editline.3 "${pkgdir}"/share/man/man3/el.3
+	install -Dm644 COPYING "${pkgdir}"/usr/share/licenses/libedit/LICENSE
+}
