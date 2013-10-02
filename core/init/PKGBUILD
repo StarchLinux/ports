@@ -1,0 +1,21 @@
+pkgname=init
+pkgver=15980.0
+pkgrel=1
+arch=('x86_64')
+license=('meh')
+groups=('base')
+source=(http://strake.me.uk:1104/$pkgname-$pkgver.tar.gz)
+
+build() {
+	cd "$srcdir/$pkgname"
+	for x in asynx_spawn init respawn; do cc $CFLAGS -o $x $x.c; done
+}
+
+package() {
+	cd "$srcdir/$pkgname"
+	mkdir -p "$pkgdir/sbin"
+	cp asynx_spawn init respawn "$pkgdir/sbin/"
+	chmod +x "$pkgdir/sbin/"*
+}
+
+sha256sums=('8c0ac53715f27e20557118329fc6f9dfa8db7d52236917aa50b78e608b010329')
