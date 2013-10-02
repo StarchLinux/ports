@@ -1,0 +1,16 @@
+pkgname=itscripts
+pkgver=15980.0
+pkgrel=1
+pkgdesc=""
+arch=(any)
+url="http://starchlinux.org/"
+license=('meh')
+groups=('base')
+depends=('ksh')
+source=(go.sh)
+
+package() {
+	install -Dm 700 "$srcdir/go.sh" "$pkgdir/sbin/go"
+}
+
+sha256sums=('d29b09252756027d49f9bd04835413c0c91188a93ce44ec295fd63c05e64db62')
