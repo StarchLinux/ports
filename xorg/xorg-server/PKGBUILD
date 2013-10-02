@@ -38,7 +38,10 @@ prepare() {
   patch -Np1 -i ../fb-rename-wfbDestroyGlyphCache.patch
 
   echo hw/xfree86/os-support/xf86_OSlib.h | situ sed 's/<termio\.h>/<termios.h>/'
+
+  echo hw/kdrive/linux/linux.c | situ sed -r 's/__(.id_t)/\1/g'
 }
+
 build() {
   cd "${pkgbase}-${pkgver}"
   LIBS="-lSM -lICE -lXext -lXmu -lX11 -lxcb -lXau -lfreetype -lfontenc -lz -lbz2" \
@@ -52,13 +55,14 @@ build() {
       --disable-xnest \
       --enable-composite \
       --enable-xcsecurity \
-      --enable-xorg \
-      --enable-xephyr \
+      --disable-xorg \
+      --disable-xephyr \
       --disable-glx \
-      --disable-kdrive \
-      --enable-install-setuid \
+      --enable-kdrive \
+      --enable-kdrive-evdev \
+      --disable-install-setuid \
       --enable-record \
-      --disable-xfbdev \
+      --enable-xfbdev \
       --disable-xfake \
       --disable-shared \
       --sysconfdir=/etc/X11 \
@@ -103,7 +107,7 @@ package_xorg-server() {
   conflicts=('nvidia-utils<=290.10')
 
   cd "${pkgbase}-${pkgver}"
-  make DESTDIR="${pkgdir}" install
+  make -C hw/kdrive DESTDIR="${pkgdir}" install
 
   install -m755 -d "${pkgdir}/etc/X11"
   mkdir "${pkgdir}/etc/X11/xorg.conf.d"
