@@ -1,0 +1,46 @@
+# $Id: PKGBUILD 187048 2013-06-03 11:15:42Z allan $
+# Maintainer: Thomas Bächler <thomas@archlinux.org>
+
+pkgname=wpa_supplicant
+pkgver=2.0
+pkgrel=4
+pkgdesc="A utility providing key negotiation for WPA wireless networks"
+url="http://hostap.epitest.fi/wpa_supplicant"
+arch=('i686' 'x86_64')
+depends=('openssl' 'libnl')
+optdepends=('wpa_supplicant_gui: wpa_gui program')
+license=('GPL')
+backup=('etc/wpa_supplicant/wpa_supplicant.conf')
+source=("http://w1.fi/releases/${pkgname}-${pkgver}.tar.gz"
+	config)
+
+prepare() {
+  find | grep '/Makefile$' | situ sed 's/-lcrypto/& -lz/g'
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}/"
+  cd "${pkgname}"
+
+  cp "${srcdir}/config" ./.config
+
+  ls Makefile | sed 's@/usr/local@$(PREFIX)@g'
+
+  make PREFIX=
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}/${pkgname}"
+  make PREFIX= DESTDIR="${pkgdir}" install
+
+  install -d -m755 "${pkgdir}/etc/wpa_supplicant"
+  install -m644 wpa_supplicant.conf "${pkgdir}/etc/wpa_supplicant/wpa_supplicant.conf"
+
+  install -d -m755 "${pkgdir}/doc/man/man"{5,8}
+  install -m644 doc/docbook/*.5 "${pkgdir}/doc/man/man5/"
+  install -m644 doc/docbook/*.8 "${pkgdir}/doc/man/man8/"
+  rm -f "${pkgdir}/usr/share/man/man8/wpa_"{priv,gui}.8
+}
+
+sha256sums=('2c115609fbb5223d51381084a5c944455a8afcda81d584173ff55ba233379e09'
+            'SKIP')
