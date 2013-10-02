@@ -1,0 +1,33 @@
+# $Id: PKGBUILD 92911 2013-06-18 17:53:17Z bpiotrowski $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+# Contributor: Allan McRae <allan@archlinux.org>
+# Contributor: Thomas Haider <t.haider@vcnc.org>
+
+pkgname=libev
+pkgver=4.15
+pkgrel=1
+pkgdesc="A full-featured and high-performance event loop"
+arch=('i686' 'x86_64')
+url="http://software.schmorp.de/pkg/libev.html"
+license=('BSD')
+options=('!libtool')
+source=(http://dist.schmorp.de/${pkgname}/${pkgname}-${pkgver}.tar.gz)
+sha1sums=('88655b1e2c0b328c9f90a6df7e72361a97fa8dc3')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  ./configure --prefix= --disable-shared
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  make DESTDIR="${pkgdir}" install
+
+  # fix conflict with libevent
+  rm ${pkgdir}/include/event.h
+  
+  install -Dm644 LICENSE ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE
+}
