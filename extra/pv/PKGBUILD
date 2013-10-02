@@ -1,0 +1,27 @@
+# $Id: PKGBUILD 84287 2013-02-15 14:40:03Z lfleischer $
+# Maintainer: Kaiting Chen <kaitocracy@gmail.com>
+# Contributor: Aaron Schaefer <aaron@elasticdog.com>
+
+pkgname=pv
+pkgver=1.4.6
+pkgrel=1
+pkgdesc='A terminal-based tool for monitoring the progress of data through a pipeline.'
+arch=('i686' 'x86_64')
+url='http://www.ivarch.com/programs/pv.shtml'
+license=('custom:Artistic 2.0')
+source=("http://www.ivarch.com/programs/sources/$pkgname-$pkgver.tar.bz2")
+md5sums=('d55ff76f5caa83efc23aa527dbb0b191')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  ./configure --prefix= --mandir=/doc/man
+  make
+}
+  
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  make DESTDIR="$pkgdir" install
+  install -Dm0644 doc/COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+}
