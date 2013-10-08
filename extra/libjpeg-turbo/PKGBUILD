@@ -1,0 +1,53 @@
+# $Id: PKGBUILD 186466 2013-05-26 22:08:45Z eric $
+# Maintainer: Allan McRae <allan@archlinux.org>
+# Contributor: Simone Sclavi 'Ito' <darkhado@gmail.com>
+
+pkgname=libjpeg-turbo
+pkgver=1.3.0
+pkgrel=2
+pkgdesc="libjpeg derivative with accelerated baseline JPEG compression and decompression"
+arch=('i686' 'x86_64')
+url="http://libjpeg-turbo.virtualgl.org/"
+license=('GPL' 'custom')
+makedepends=('nasm')
+provides=('libjpeg=8.0.2' 'turbojpeg')
+conflicts=('libjpeg' 'turbojpeg')
+replaces=('libjpeg' 'turbojpeg')
+options=('!libtool')
+source=(http://sourceforge.net/projects/$pkgname/files/$pkgver/$pkgname-$pkgver.tar.gz unbreak.diff)
+
+prepare() {
+  cd "$srcdir/$pkgname-$pkgver"
+  patch -p 0 <"$srcdir/unbreak.diff"
+}
+
+build() {
+  cd $pkgname-$pkgver
+  CXX="gcc -x c" CXXCPP=/bin/true \
+  ./configure --prefix= --disable-shared --with-jpeg8 --mandir=/doc/man
+  make
+}
+
+check() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make test
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir/" MKDIRPROG="mkdir -p" \
+    docdir=/doc/pkg/libjpeg-turbo \
+    exampledir=/doc/pkg/libjpeg-turbo install
+  
+  # provide jpegint.h as it is required by various software
+  install -m644 jpegint.h "$pkgdir/include/"
+  
+  install -dm755 "$pkgdir/usr/share/licenses/libjpeg-turbo/"
+  ln -s ../../doc/libjpeg-turbo/README \
+    "$pkgdir/usr/share/licenses/libjpeg-turbo/README"
+  ln -s ../../doc/libjpeg-turbo/README-turbo.txt \
+    "$pkgdir/usr/share/licenses/libjpeg-turbo/README-turbo.txt"
+}
+
+sha256sums=('2657008cfc08aadbaca065bd9f8964b8a2c0abd03e73da5b5f09c1216be31234'
+            '6fba1561df8fa1bf7d34c3254afdc364aa06a7932c43ad9ddbdbe05c32fa1af4')
