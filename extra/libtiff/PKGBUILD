@@ -1,0 +1,58 @@
+# $Id: PKGBUILD 193540 2013-08-22 21:13:54Z eric $
+# Maintainer: Eric Bélanger <eric@archlinux.org>
+
+pkgname=libtiff
+pkgver=4.0.3
+pkgrel=3
+pkgdesc="Library for manipulation of TIFF images"
+arch=('i686' 'x86_64')
+url="http://www.remotesensing.org/libtiff/"
+license=('custom')
+depends=('libjpeg' 'zlib' 'xz')
+options=('!libtool')
+source=(ftp://ftp.remotesensing.org/pub/libtiff/tiff-${pkgver}.tar.gz
+	tiff-3.9.7-CVE-2012-4564.patch
+	tiff-4.0.3-CVE-2013-1960.patch
+	tiff-4.0.3-CVE-2013-1961.patch
+	tiff-4.0.3-libjpeg-turbo.patch
+	tiff-4.0.3-tiff2pdf-colors.patch
+	tiff-4.0.3-CVE-2013-4231.patch
+	tiff-4.0.3-CVE-2013-4232.patch)
+
+prepare() {
+  cd tiff-${pkgver}
+  patch -p0 -i "${srcdir}/tiff-4.0.3-tiff2pdf-colors.patch"
+  patch -p1 -i "${srcdir}/tiff-3.9.7-CVE-2012-4564.patch"
+  patch -p1 -i "${srcdir}/tiff-4.0.3-CVE-2013-1960.patch"
+  patch -p1 -i "${srcdir}/tiff-4.0.3-CVE-2013-1961.patch"
+  patch -p1 -i "${srcdir}/tiff-4.0.3-libjpeg-turbo.patch"
+  cd tools
+  patch -p0 -i "${srcdir}/tiff-4.0.3-CVE-2013-4231.patch"
+  patch -p0 -i "${srcdir}/tiff-4.0.3-CVE-2013-4232.patch"
+}
+
+build() {
+  cd tiff-${pkgver}
+  ./configure --prefix= --disable-cxx --disable-shared
+  make
+}
+
+check() {
+  cd tiff-${pkgver}
+  make check
+}
+
+package() {
+  cd tiff-${pkgver}
+  make DESTDIR="${pkgdir}" install
+  install -D -m644 COPYRIGHT "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
+
+sha256sums=('ea1aebe282319537fb2d4d7805f478dd4e0e05c33d0928baba76a7c963684872'
+            '525f667e2148229520b50d6136c0ecd345b8db9acc62fde945a5f13dae4d51f3'
+            '688e577d3266b1cd7df5321b5e63fed82d088407a447a022eea2188d643b5a5b'
+            '2f0a1cf4826416d248ff5288db7702b80245d02c624c415836053a762c1e3fd4'
+            'fd31eb80f5eaf37d689bc3d3dc3f40e050bb99ebfe5eb575e9f9e25281037740'
+            '18c1446e15383bdb94884bc140002719c8ebffba5e43ae90c12f9de7041d456c'
+            'f5076b0e845e7eeebbd583bcd9b885a84d092fc132e99595f0dd80ae3fd1259a'
+            '27897455dbcddf4cbc8c520690b1de179e61fc96fdbb81acb0f22ca4eda4da69')
