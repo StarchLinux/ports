@@ -1,0 +1,27 @@
+From 7bc2543ee36e46fedfea3f0af6042be3667e88d2 Mon Sep 17 00:00:00 2001
+From: Strake <strake888@gmail.com>
+Date: Wed, 9 Oct 2013 11:36:34 -0500
+Subject: [PATCH] unbreak KdEnableInput
+
+---
+ hw/kdrive/src/kinput.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/hw/kdrive/src/kinput.c b/hw/kdrive/src/kinput.c
+index 527c7a2..c49f2e0 100644
+--- a/hw/kdrive/src/kinput.c
++++ b/hw/kdrive/src/kinput.c
+@@ -320,8 +320,8 @@ KdEnableInput(void)
+ 
+     /* reset screen saver */
+     ev.any.time = GetTimeInMillis();
+-    NoticeEventTime(&ev, pi->dixdev);
+-    NoticeEventTime(&ev, ki->dixdev);
++    if (kdPointers)  NoticeEventTime(&ev, kdPointers ->dixdev);
++    if (kdKeyboards) NoticeEventTime(&ev, kdKeyboards->dixdev);
+ 
+     OsReleaseSIGIO();
+ }
+-- 
+1.7.11.1
+

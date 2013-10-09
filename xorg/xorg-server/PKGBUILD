@@ -15,6 +15,7 @@ makedepends=('pixman' 'libx11' 'xf86driproto' 'xcmiscproto' 'xtrans' 'bigreqspro
              'xorg-font-util' 'glproto' 'dri2proto' 'libdrm' 'zlib' 'bzip2')
 options=('!libtool')
 source=(${url}/releases/individual/xserver/${pkgbase}-${pkgver}.tar.bz2
+        0001-unbreak-KdEnableInput.patch
         autoconfig-nvidia.patch
         autoconfig-sis.patch
         xserver-1.6.0-less-acpi-brokenness.patch
@@ -26,16 +27,18 @@ source=(${url}/releases/individual/xserver/${pkgbase}-${pkgver}.tar.bz2
 prepare() {
   cd "${pkgbase}-${pkgver}"
   # Use nouveau/nv/nvidia drivers for nvidia devices
-  patch -Np1 -i ../autoconfig-nvidia.patch
+  patch -Np 1 -i ../autoconfig-nvidia.patch
 
   # Use unofficial imedia SiS driver for supported SiS devices
-  patch -Np0 -i ../autoconfig-sis.patch
+  patch -Np 0 -i ../autoconfig-sis.patch
 
   # From Fedora. Do not build acpid code, it is buggy and we do not need it
-  patch -Np1 -i ../xserver-1.6.0-less-acpi-brokenness.patch
+  patch -Np 1 -i ../xserver-1.6.0-less-acpi-brokenness.patch
 
   # http://cgit.freedesktop.org/xorg/xserver/commit/fb/wfbrename.h?id=5047810a4c20fab444b8c6eb146c55dcdb0d4219
-  patch -Np1 -i ../fb-rename-wfbDestroyGlyphCache.patch
+  patch -Np 1 -i ../fb-rename-wfbDestroyGlyphCache.patch
+
+  patch -Np 1 <"$srcdir/0001-unbreak-KdEnableInput.patch"
 
   echo hw/xfree86/os-support/xf86_OSlib.h | situ sed 's/<termio\.h>/<termios.h>/'
 
@@ -166,6 +169,7 @@ package_xorg-server-devel() {
 }
 
 sha256sums=('f6ddfb3f1cfff2d69d45657aec626ebe8b5847810154ff7df7ed2072b076c86b'
+            '8ee309384381ce3e4f77d7fe895a7a5d04ecd0002a93351856945a3a4bef3615'
             '66e25f76a7496c429e0aff4b0670f168719bb0ceaeb88c6f2272f2bf3ed21162'
             'd027776fac1f7675b0a9ee817502290b1c45f9c09b0f0a6bb058c35f92361e84'
             'e033f9bcc21980f7f0428e6ed6c362a3d55ad293b05fd6e6c6c1933b86f9e63a'
