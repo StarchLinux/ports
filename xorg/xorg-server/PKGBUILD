@@ -76,11 +76,7 @@ build() {
   make
 
   # Disable subdirs for make install rule to make splitting easier
-  sed -e 's/^DMX_SUBDIRS =.*/DMX_SUBDIRS =/' \
-      -e 's/^XVFB_SUBDIRS =.*/XVFB_SUBDIRS =/' \
-      -e 's/^XNEST_SUBDIRS =.*/XNEST_SUBDIRS = /' \
-      -e 's/^KDRIVE_SUBDIRS =.*/KDRIVE_SUBDIRS =/' \
-      -i hw/Makefile
+  ls hw/Makefile | situ sed -r 's/^(DMX|XVFB|XNEST|KDRIVE)_SUBDIRS =.*/\1_SUBDIRS =/'
 }
 
 package_xorg-server-common() {
