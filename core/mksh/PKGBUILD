@@ -10,6 +10,7 @@ pkgdesc='The MirBSD Korn Shell - an enhanced version of the public domain ksh'
 url='https://www.mirbsd.org/mksh.htm'
 license=('custom')
 arch=('i686' 'x86_64')
+provides=('ksh')
 install=mksh.install
 source=("https://www.mirbsd.org/MirOS/dist/mir/mksh/$pkgname-$_pkgver.tgz"
         'https://www.mirbsd.org/TaC-mksh.txt')
@@ -31,6 +32,7 @@ package() {
   install -D -m 644 mksh.1 "$pkgdir/doc/man/man1/mksh.1"
   install -D -m 644 dot.mkshrc "$pkgdir/etc/skel/.mkshrc"
   install -D -m 644 "$srcdir/TaC-mksh.txt" "$pkgdir/usr/share/licenses/mksh/TaC-mksh.txt"
+  ln "$pkgdir/bin/mksh" "$pkgdir/bin/ksh"
 }
 
 sha256sums=('e67686187ba6dfbf99b7f6b5f841dfb5cd9f980504f8b631d7d3bfd98d345792'
