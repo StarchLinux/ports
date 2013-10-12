@@ -1,0 +1,20 @@
+# Keeper: Strake <strake888@gmail.com>
+pkgname=lz4
+pkgver=r106
+pkgrel=1
+arch=(x86_64)
+url="https://code.google.com/p/lz4/"
+license=('GPL')
+groups=(base)
+source=(https://dl.dropboxusercontent.com/u/59565338/LZ4/$pkgname-$pkgver.tar.gz)
+sha256sums=('8f4061e39b84eda7c14c6ddcec2fa69c073ddf6ca32e5f848b03b94cbecad4be')
+
+build() {
+	cd "$srcdir/$pkgname-$pkgver"
+	make
+}
+
+package() {
+	cd "$srcdir/$pkgname-$pkgver"
+	make PREFIX="$pkgdir" install
+}
