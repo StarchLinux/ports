@@ -1,13 +1,13 @@
 # Keeper: Strake <strake888@gmail.com>
 pkgname=musl
-pkgver=0.9.12
+pkgver=0.9.14
 pkgrel=1
 pkgdesc="C standard library"
 arch=(x86_64)
 url="http://musl-libc.org/"
 license=('MIT')
 groups=('base')
-source=(http://www.musl-libc.org/releases/musl-0.9.12.tar.gz)
+source=(http://www.musl-libc.org/releases/$pkgname-$pkgver.tar.gz)
 
 build() {
 	cd "$srcdir/$pkgname-$pkgver"
@@ -21,4 +21,4 @@ package() {
 	rm -rf "$pkgdir/bin" # musl-gcc
 }
 
-sha256sums=('72353f9e1f2fdaf5e88223dcd1cfa5555f5a364eb5e4a9967de1fd44cc4c6d3e')
+sha256sums=('982e9de1287cf95f9aa526adba008660d8885bfccc41faf5c613ea47f1922872')
