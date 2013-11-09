@@ -33,9 +33,9 @@ build() {
 
 	CPPFLAGS="-DMISSING_HOWMANY -DMAXHOSTNAMELEN=4096 -include howmany.h" \
 	./configure \
-		--prefix=/usr \
-		--sbindir=/usr/bin \
-		--libexecdir=/usr/lib/ssh \
+		--prefix= \
+		--sbindir=/sbin \
+		--libexecdir=/lib/ssh \
 		--sysconfdir=/etc/ssh \
 		--disable-utmp \
 		--disable-wtmp \
