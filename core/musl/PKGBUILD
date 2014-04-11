@@ -1,6 +1,6 @@
 # Keeper: Strake <strake888@gmail.com>
 pkgname=musl
-pkgver=0.9.14
+pkgver=1.0.0
 pkgrel=1
 pkgdesc="C standard library"
 arch=(x86_64)
@@ -21,4 +21,4 @@ package() {
 	rm -rf "$pkgdir/bin" # musl-gcc
 }
 
-sha256sums=('982e9de1287cf95f9aa526adba008660d8885bfccc41faf5c613ea47f1922872')
+sha256sums=('1ad7f45d2972daff19c9e6a92714e6d70f4aad003cd8c3d1e6113432114c1a32')
